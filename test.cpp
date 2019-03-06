@@ -17,23 +17,19 @@ double minX = -2.0;
 double maxY = 1.0;
 double minY = -1.0;
 double a,b;
+int hilos = 4;
 int iters = 100;
 double factorX, factorY;
 double cx, cy;
 
-int main(int argc, char **argv){
-   
-   ALLEGRO_DISPLAY *display = NULL;
-
-   al_init();
-int s=0;
-   display = al_create_display(1200, 800);
-
+void mandelbrot(int sector){
+    int minrow=(800/hilos)*sector;
+    int maxrow=minrow+(800/hilos);
     factorX = (abs(minX)+abs(maxX))/1200.0;
     factorY = (abs(minY)+abs(maxY))/800.0;
   //  printf("Fx = %f, Fy = %f", factorX, factorY);
     int i;
-for(int y=0; y<800; y++){
+for(int y=minrow; y<maxrow; y++){
     for(int x=0; x<1200; x++){
         cx = (double)minX+(double)x*factorX;
         cy = (double)minY+(double)y*factorY;
@@ -47,15 +43,24 @@ for(int y=0; y<800; y++){
             double dosab = 2*a*b;
             a = a2-b2+cx;
             b = dosab+cy;
-            if(i>s)s=i;
         }
         if(i<iters-1)al_draw_pixel(x,y, al_map_rgb((log10((double)i))*128.0,(log10((double)i))*64.0,(log10((double)i*2))*128.0));
     }
     //if(y%199==0)    
     al_flip_display();
 }
- //   printf("%i",s);
-//    al_rest(10.0);
+
+}
+
+int main(int argc, char **argv){
+    ALLEGRO_DISPLAY *display = NULL;
+    al_init();
+    int s=0;
+    display = al_create_display(1200, 800);
+    for(int i=0; i<hilos; i++){
+    mandelbrot(i);
+    al_rest(2.0);
+    }
     al_destroy_display(display);
 
    return 0;
